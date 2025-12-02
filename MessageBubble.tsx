@@ -81,7 +81,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
                 return (
                   <CodeBlock 
                     key={index} 
-                    language={part.language} 
+                    language={part.language || ''} 
                     code={part.content.trim()} 
                   />
                 );
@@ -90,7 +90,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
               // This is a lightweight substitute for a full markdown parser
               return (
                 <div key={index} className="whitespace-pre-wrap mb-2">
-                  {part.content.split(/(\*\*.*?\*\*)/g).map((chunk, i) => {
+                  {part.content.split(/(\*\*.*?\*\*)/g).map((chunk: string, i: number) => {
                     if (chunk.startsWith('**') && chunk.endsWith('**')) {
                       return <strong key={i} className="text-white font-bold">{chunk.slice(2, -2)}</strong>;
                     }
