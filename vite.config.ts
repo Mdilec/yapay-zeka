@@ -5,8 +5,11 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   define: {
-    // Process env polyfill for browser compatibility if needed
-    'process.env': process.env
+    // Vercel veya Node ortamındaki env değişkenlerini güvenli bir şekilde frontend'e gömüyoruz
+    'process.env.API_KEY': JSON.stringify(process.env.API_KEY),
+    'process.env.ADMIN_KEY': JSON.stringify(process.env.ADMIN_KEY),
+    // Diğer process.env çağrıları için boş obje (hatayı önler)
+    'process.env': {}
   },
   build: {
     outDir: 'dist',
