@@ -80,11 +80,16 @@
     const left = (s.buffUntil - now) / 1000;
     $('buff').classList.toggle('hidden', left <= 0);
     if (left > 0) $('buff').textContent = '🔥 Delilik x' + s.buffMult + ' — ' + Math.ceil(left) + ' sn';
+    let teased = false;
     for (const g of E.GENERATORS) {
       const u = gensUI[g.id], own = s.owned[g.id] || 0;
       const k = qty === 'max' ? Math.max(E.maxAffordable(g, own, s.stardust), 1) : qty;
       const cost = E.batchCost(g, own, k);
-      u.r.classList.toggle('locked', own === 0 && s.totalMined < g.base * 0.3);
+      const hidden = own === 0 && s.totalMined < g.base * 0.3;
+      // The first not-yet-unlocked generator stays visible as a teaser, the rest are hidden.
+      const show = !hidden || !teased;
+      if (hidden) teased = true;
+      u.r.classList.toggle('locked', !show);
       u.own.textContent = 'Sahip: ' + own;
       u.desc.textContent = '+' + E.fmt(g.cps * E.globalMult(s, now)) + ' ✦/sn (birim)';
       u.btn.textContent = 'x' + k + ' — ' + E.fmt(cost) + ' ✦';
@@ -92,7 +97,7 @@
     }
     for (const u of E.UPGRADES) {
       const ui = upsUI[u.id], bought = !!s.upgrades[u.id];
-      ui.r.classList.toggle('locked', bought || (u.req && !s.upgrades[u.req]));
+      ui.r.classList.toggle('locked', bought || (u.req && !s.upgrades[u.req]) || s.totalMined < u.cost * 0.1);
       ui.btn.textContent = E.fmt(u.cost) + ' ✦'; ui.btn.disabled = s.stardust < u.cost;
     }
     for (const u of E.ESSENCE_UPGRADES) {
