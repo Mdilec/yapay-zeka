@@ -5,6 +5,20 @@
   const $ = id => document.getElementById(id);
   let s, qty = 1, now = Date.now(), goldenTimer = 0, goldenEl = null;
 
+  // Synthesized sound effects (WebAudio, no assets). Muted state is persisted.
+  let audio = null, muted = localStorage.getItem('sdMuted') === '1';
+  function beep(freq, dur, type, vol) {
+    if (muted) return;
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      const o = audio.createOscillator(), g = audio.createGain();
+      o.type = type || 'sine'; o.frequency.value = freq;
+      g.gain.setValueAtTime(vol || 0.05, audio.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + dur);
+      o.connect(g); g.connect(audio.destination); o.start(); o.stop(audio.currentTime + dur);
+    } catch (e) { /* ses desteklenmiyor */ }
+  }
+
   function load() {
     try { const raw = localStorage.getItem(KEY); if (raw) return E.deserialize(raw, Date.now()); } catch (e) { console.warn('Kayıt okunamadı', e); }
     return E.defaultState(Date.now());
@@ -32,7 +46,7 @@
   function build() {
     for (const g of E.GENERATORS) {
       const r = row(g.name, ''); $('gens').appendChild(r);
-      r.querySelector('button').addEventListener('click', () => { E.buyGenerator(s, g.id, qty); });
+      r.querySelector('button').addEventListener('click', () => { if (E.buyGenerator(s, g.id, qty)) beep(660, 0.1); });
       gensUI[g.id] = { r, desc: r.querySelector('.desc'), own: r.querySelector('.own'), btn: r.querySelector('button') };
     }
     for (const u of E.UPGRADES) {
@@ -94,7 +108,7 @@
     goldenEl = document.createElement('button'); goldenEl.id = 'golden'; goldenEl.textContent = '🌟';
     goldenEl.style.left = (10 + Math.random() * 80) + 'vw'; goldenEl.style.top = (15 + Math.random() * 70) + 'vh';
     goldenEl.addEventListener('click', () => {
-      const r = E.goldenReward(s, Date.now());
+      const r = E.goldenReward(s, Date.now()); beep(1200, 0.4, 'sine', 0.08);
       toast(r.kind === 'lucky' ? '🌟 Şanslı! +' + E.fmt(r.gain) + ' ✦' : '🌟 Delilik! Üretim x7 (30 sn)');
       goldenEl.remove(); goldenEl = null; scheduleGolden();
     });
@@ -114,6 +128,7 @@
     $('core').addEventListener('click', ev => {
       const r = E.click(s, Date.now());
       floatText(ev.clientX || 100, ev.clientY || 100, '+' + E.fmt(r.gain), r.crit);
+      beep(r.crit ? 880 : 440, 0.08, 'triangle');
     });
     $('qty').addEventListener('click', ev => {
       const q = ev.target.dataset && ev.target.dataset.q; if (!q) return;
@@ -134,6 +149,11 @@
     });
     $('resetBtn').addEventListener('click', () => {
       if (confirm('TÜM ilerleme silinsin mi?')) { s = E.defaultState(Date.now()); save(); }
+    });
+    $('soundBtn').textContent = muted ? '\ud83d\udd07 Sessiz' : '\ud83d\udd0a Ses';
+    $('soundBtn').addEventListener('click', () => {
+      muted = !muted; localStorage.setItem('sdMuted', muted ? '1' : '0');
+      $('soundBtn').textContent = muted ? '\ud83d\udd07 Sessiz' : '\ud83d\udd0a Ses';
     });
     window.addEventListener('beforeunload', save);
     setInterval(save, 15000);

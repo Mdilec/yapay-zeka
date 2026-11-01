@@ -2,5 +2,5 @@
   "name": "stardust-tycoon-plus",
   "private": true,
   "type": "commonjs",
-  "scripts": { "test": "node --test test/engine.test.js" }
+  "scripts": { "test": "node --test test/engine.test.js", "test:ui": "node test/ui.js", "sim": "node test/sim.js" }
 }
