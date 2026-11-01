@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yıldız Tozu Imparatorluğu+</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>✦ Yıldız Tozu Imparatorluğu+</h1>
+  <div id="stardust" class="big">0</div>
+  <div id="rate" class="sub"></div>
+  <div id="buff" class="buff hidden"></div>
+</header>
+<main>
+  <section class="panel center">
+    <button id="core" aria-label="Çekirdeğe tıkla">✦</button>
+    <div id="perClick" class="sub"></div>
+    <div class="stats">
+      <div>Toplam: <b id="totalMined">0</b></div>
+      <div>Tıklama: <b id="clicks">0</b></div>
+      <div>Başarım: <b id="achCount">0</b>/<span id="achTotal"></span></div>
+    </div>
+    <div class="prestige">
+      <div>Kozmik Öz: <b id="essence">0</b> <small>(her biri +%2 üretim)</small></div>
+      <button id="ascendBtn">Yükselme</button>
+    </div>
+    <div class="actions">
+      <button id="exportBtn">Dışa aktar</button>
+      <button id="importBtn">İçe aktar</button>
+      <button id="resetBtn" class="danger">Sıfırla</button>
+    </div>
+  </section>
+  <section class="panel">
+    <h2>Üreticiler</h2>
+    <div class="qty" id="qty">
+      <button data-q="1" class="on">x1</button><button data-q="10">x10</button><button data-q="100">x100</button><button data-q="max">Maks</button>
+    </div>
+    <div id="gens"></div>
+  </section>
+  <section class="panel">
+    <h2>Yükseltmeler</h2>
+    <div id="ups"></div>
+    <h2>Kozmik Öz Mağazası</h2>
+    <div id="eups"></div>
+    <h2>Başarımlar</h2>
+    <div id="achs" class="achs"></div>
+  </section>
+</main>
+<div id="toasts"></div>
+<script src="engine.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
